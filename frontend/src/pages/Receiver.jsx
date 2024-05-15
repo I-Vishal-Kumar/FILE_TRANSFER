@@ -5,7 +5,7 @@ const CHUNK_SIZE = 5120;
 export default function Receiver() {
     const [receivedMessage, setReceivedMessage] = useState(null);
     const [peerId, setPeerId] = useState("");
-    const [gatheredData, setData] = useState("");
+    const [gatheredData, setData] = useState([]);
     const [isDownloadable, setIsDownloadable] = useState(false);
     const peerRef = useRef();
 
@@ -33,6 +33,7 @@ export default function Receiver() {
             conn.send("hello from receiver");
             conn.on("data", (data) => {
                 // if (data.chunkIndex + 1 !== data.totalChunks) {
+                console.log("got data", data);
                 setData((prevData) => [...prevData, data]);
                 // } else {
                 // console.log(gatheredData);
@@ -40,45 +41,10 @@ export default function Receiver() {
             });
         });
     };
-    // const downloadFile = () => {
-    //     console.log(gatheredData);
-    //     if (isDownloadable) {
-    //         // Concatenate all received chunks into a single Uint8Array
-    //         const totalSize = gatheredData.reduce(
-    //             (acc, chunk) => acc + chunk.chunk.byteLength,
-    //             0
-    //         );
 
-    //         const mergedArray = new Uint8Array(totalSize);
-    //         // Concatenate the received chunks into the merged array
-    //         let offset = 0;
-    //         gatheredData.forEach((chunk) => {
-    //             mergedArray.set(new Uint8Array(chunk.chunk), offset);
-    //             offset += chunk.chunk.byteLength;
-    //         });
-    //         // Create a Blob from the Uint8Array
-    //         const fileBlob = new Blob([mergedArray], {
-    //             type: gatheredData[0].type,
-    //         });
-
-    //         // Create a URL for the Blob
-    //         const fileURL = URL.createObjectURL(fileBlob);
-
-    //         // Create a temporary anchor element to trigger the download
-    //         const downloadLink = document.createElement("a");
-    //         downloadLink.href = fileURL;
-    //         downloadLink.download = "received_file"; // Specify the filename here
-    //         document.body.appendChild(downloadLink);
-    //         downloadLink.click();
-
-    //         // Clean up
-    //         document.body.removeChild(downloadLink);
-    //         URL.revokeObjectURL(fileURL);
-    //     }
-    // };
     // Main JavaScript file
     const downloadFile = () => {
-        console.log(gatheredData);
+        console.log("initiate download", gatheredData);
         if (isDownloadable) {
             // Create a new web worker for downloading the file
             const fileDownloaderWorker = new Worker("fileDownloaderWorker.js");

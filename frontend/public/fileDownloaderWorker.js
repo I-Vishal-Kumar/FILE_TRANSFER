@@ -3,7 +3,7 @@ onmessage = function (event) {
     const gatheredData = event.data.gatheredData;
 
     if (event.data.isDownloadable) {
-        console.log(gatheredData);
+        console.log("what we have on worker", gatheredData);
         // Concatenate all received chunks into a single Uint8Array
         const totalSize = gatheredData.reduce(
             (acc, chunk) => acc + chunk.chunk.byteLength,
