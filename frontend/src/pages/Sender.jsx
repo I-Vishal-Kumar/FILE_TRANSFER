@@ -11,7 +11,7 @@ export default function Sender() {
     useEffect(() => {
         peerRef.current = new Peer();
         peerRef.current.on("open", (id) => {
-            console.log(id);
+            setPeerId(id);
             peerRef.current.on("connection", (conn) => {
                 connRef.current = conn;
                 conn.on("data", (data) => {
@@ -56,13 +56,13 @@ export default function Sender() {
         <section className="text-white container flex items-center w-screen justify-center ">
             <div className="ring-1 text-lime-200 rounded-md ring-red-400 h-[60vh] grid place-content-center w-3/4">
                 <h2>Sender Peer ID: {peerId}</h2>
-                <input
+                {/* <input
                     type="text"
                     value={peerId}
                     onChange={(e) => setPeerId(e.target.value)}
                     placeholder="id"
                 />
-                <button onClick={call}>call</button>
+                <button onClick={call}>call</button> */}
                 <input
                     type="file"
                     onChange={(e) => {
