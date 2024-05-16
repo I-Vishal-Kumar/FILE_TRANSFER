@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { FaCloudArrowUp, FaCopy } from "react-icons/fa6";
 import { Peer } from "peerjs";
-// const CHUNK_SIZE = 5120;
-const CHUNK_SIZE = 1000000;
+// const CHUNK_SIZE = 2 * 1024 * 1024; // 2MB
 
 export default function Sender() {
     const [peerId, setPeerId] = useState("");
     const [file, setFile] = useState();
+    const [progress, setProgress] = useState(0);
     const peerRef = useRef();
     const connRef = useRef();
     useEffect(() => {
@@ -20,57 +21,75 @@ export default function Sender() {
             });
         });
     }, []);
-    const call = () => {
-        const conn = peerRef.current.connect(peerId);
-        conn.on("open", () => {
-            console.log("hey");
-            conn.send("hi");
-        });
-    };
+
     const send = () => {
-        const fileReader = new FileReader();
-        fileReader.readAsArrayBuffer(file);
-        fileReader.onload = function (event) {
-            const arrayBuffer = event.target.result;
-            const totalChunks = Math.ceil(arrayBuffer.byteLength / CHUNK_SIZE);
-            let offset = 0;
-            let chunkIndex = 0;
-            while (offset < arrayBuffer.byteLength) {
-                const chunk = arrayBuffer.slice(offset, offset + CHUNK_SIZE);
-                const data = {
-                    chunk,
-                    name: file.name,
-                    totalChunks,
-                    chunkIndex,
-                    type: file.type,
-                };
-                console.log(data);
-                connRef.current.send(data);
-                offset += CHUNK_SIZE;
-                chunkIndex += 1;
-            }
+        const fileStream = file.stream();
+        const reader = fileStream.getReader();
+        let bytesSent = 0;
+        let totalSize = file.size;
+
+        // sending the file meta data before transfer start;
+        connRef.current.send({
+            isMetadata: true,
+            name: file.name,
+            type: file.type,
+            size: totalSize,
+        });
+
+        const readChunk = () => {
+            reader.read().then(({ done, value }) => {
+                if (done) {
+                    console.log("done");
+                    connRef.current.send({
+                        done: true,
+                    });
+                    return;
+                }
+                connRef.current.send(value);
+                bytesSent += value.length;
+                setProgress(Math.round((bytesSent / totalSize) * 100));
+                readChunk();
+            });
         };
+        readChunk();
     };
 
     return (
         <section className="text-white container flex items-center w-screen justify-center ">
-            <div className="ring-1 text-lime-200 rounded-md ring-red-400 h-[60vh] grid place-content-center w-3/4">
-                <h2>Sender Peer ID: {peerId}</h2>
-                {/* <input
-                    type="text"
-                    value={peerId}
-                    onChange={(e) => setPeerId(e.target.value)}
-                    placeholder="id"
-                />
-                <button onClick={call}>call</button> */}
-                <input
-                    type="file"
-                    onChange={(e) => {
-                        console.log(e.target.files[0]);
-                        setFile(e.target.files[0]);
-                    }}
-                />
-                <button onClick={send}>send</button>
+            <div className="ring-1 text-lime-200 grid-rows-6 grid rounded-md ring-red-400 h-[60vh] w-3/4">
+                {/* qr section  */}
+                {/* <div className="w-full bg-gray-800 row-span-4 p-2 rounded-t-md">
+                    <div className="flex justify-center items-center h-full w-full">
+                        hey
+                    </div>
+                    
+                </div> */}
+
+                <div className=" w-full ring-2 capitalize text-xs row-span-4 flex flex-col justify-center items-center ring-yellow-400 relative">
+                    <input
+                        className="min-h-full w-full opacity-0 absolute top-0 left-0"
+                        type="file"
+                        onChange={(e) => {
+                            setFile(e.target.files[0]);
+                        }}
+                    />
+                    <FaCloudArrowUp size={48} color="blue" />
+                    <p>Drag and drop here</p>
+                    <p>or</p>
+                    <p>browse</p>
+                </div>
+                <div className="text-sm flex flex-col justify-center gap-y-2 px-3 row-span-1 ">
+                    Sender Peer ID:{" "}
+                    <h2 className="text-xs px-4 flex gap-x-3">
+                        {peerId} <FaCopy />{" "}
+                    </h2>
+                </div>
+                <div className="w-full row-span-1 p-2">
+                    <button className="w-full h-full capitalize" onClick={send}>
+                        send
+                    </button>
+                    <p>{progress}</p>
+                </div>
             </div>
         </section>
     );
