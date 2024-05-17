@@ -1,7 +1,7 @@
 let dataArr = [];
-
-self.addEventListener("message", (event) => {
+onmessage = (event) => {
     try {
+        // console.log(event.data);
         if (event.data?.download) {
             const blob = new Blob(dataArr, { type: event?.data?.type });
             self.postMessage(blob);
@@ -12,4 +12,4 @@ self.addEventListener("message", (event) => {
     } catch (error) {
         console.log(error);
     }
-});
+};

@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "peerjs": "^1.5.3",
+    "qr-code-styling": "^1.6.0-rc.1",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
     "react-router-dom": "^6.23.1",
+    "react-toastify": "^10.0.5",
     "serve": "^14.2.3",
     "streamsaver": "^2.0.6"
   },
