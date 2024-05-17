@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCloudArrowUp, FaCopy, FaDownload, FaFile } from "react-icons/fa6";
 import Toast from "../components/Toast";
-import { QRCodeCanvas } from "qrcode.react";
 import { toast } from "react-toastify";
 import { Peer } from "peerjs";
 import QrCode from "../components/QrCode";
@@ -83,8 +82,8 @@ export default function Sender() {
     };
 
     return (
-        <section className="text-white p-1 overflow-hidden container flex items-center w-screen justify-center ">
-            <div className="ring-1 text-lime-200  grid-rows-6 grid rounded-md ring-red-400 h-[60vh] w-[90vw]">
+        <section className="text-white p-1 w-full h-full overflow-hidden container flex items-center  justify-center ">
+            <div className="ring-1 text-lime-200  grid-rows-6 grid rounded-md ring-red-400 h-[60vh]">
                 {/* qr section  */}
                 {isConnected ? (
                     <div className=" max-w-full ring-2 capitalize text-xs row-span-4 flex  flex-col justify-center items-center ring-yellow-400 relative">
@@ -101,7 +100,7 @@ export default function Sender() {
                         <p>browse</p>
                     </div>
                 ) : (
-                    <div className="w-[90vw] bg-gray-800 row-span-4 p-2 rounded-t-md">
+                    <div className=" bg-gray-800 row-span-4 p-2 rounded-t-md">
                         <div className="flex justify-center items-center h-full w-full">
                             {peerId ? (
                                 <QrCode
@@ -114,7 +113,7 @@ export default function Sender() {
                     </div>
                 )}
                 {!isConnected && (
-                    <div className="text-sm flex flex-col max-w-[90vw] justify-center gap-y-2 px-3 row-span-1">
+                    <div className="text-sm flex flex-col  justify-center gap-y-2 px-4 row-span-1">
                         connection string:
                         <div className="flex space-x-1">
                             <h2 className="text-xs truncate px-4">
