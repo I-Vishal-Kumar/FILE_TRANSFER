@@ -2,7 +2,7 @@ import { FaClock, FaGear, FaLock, FaUserGroup } from "react-icons/fa6";
 
 export default function Home() {
     return (
-        <section className="h-screen bg-background w-screen">
+        <section className=" h-full overflow-auto bg-background w-full">
             {/* settings section. */}
             <div className="flex justify-end h-[10%] p-4">
                 <FaGear size={20} />
