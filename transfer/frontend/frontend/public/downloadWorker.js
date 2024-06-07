@@ -1,5 +1,3 @@
-/* This JavaScript code snippet is setting up a web worker that listens for messages using the
-`onmessage` event handler. Here's a breakdown of what the code is doing: */
 let dataArr = [];
 onmessage = (event) => {
     try {
